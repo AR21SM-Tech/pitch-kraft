@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+langchain_groq
+langchain_community
+langchain_core
+chromadb
+pandas
+python-dotenv
+beautifulsoup4

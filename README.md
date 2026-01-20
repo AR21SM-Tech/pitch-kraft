@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PitchKraft
 
-## Getting Started
+## Overview
 
-First, run the development server:
+PitchKraft is an automated cold outreach platform that leverages generative AI and retrieval-augmented generation (RAG) to synthesize hyper-personalized emails. By scraping job descriptions and semantically matching them against a portfolio database, the system generates high-conversion outreach messages using the AIDA (Attention, Interest, Desire, Action) framework. This solution significantly reduces the manual effort required for business development while maintaining high relevance and personalization.
+
+## Research and Architecture
+
+The application is architected as a decoupled monorepo system to ensure scalability and separation of concerns.
+
+### Frontend Architecture
+The user interface is built with **Next.js 14** (App Router), utilizing React Server Components for optimal performance.
+*   **State Management**: Complex form state and asynchronous polling are handled via React Hooks.
+*   **Styling System**: Tailwind CSS coupled with the shadcn/ui component library provides a consistent, accessible design system.
+*   **Networking**: The frontend communicates with the backend services via a RESTful API layer.
+
+### Backend Architecture
+The core logic resides in a high-performance **Python FastAPI** service.
+*   **LLM Inference**: Utilizes Groq's LPU inference engine to run Llama-3-70B models with sub-second latency.
+*   **Vector Search (RAG)**: Implements a semantic search engine using ChromaDB and OpenAI Embeddings. This allows the system to retrieve relevance-scored portfolio items based on job description keywords.
+*   **Data Ingestion**: A custom scraping pipeline (BeautifulSoup/LangChain) parses unstructured web content into structured JSON schemas (Role, Skills, Experience).
+
+## Technology Stack
+
+*   **Frontend**: Next.js 14, TypeScript, Tailwind CSS, Framer Motion
+*   **Backend**: Python 3.10, FastAPI, Uvicorn
+*   **AI/ML**: LangChain, Groq SDK (Llama-3), OpenAI Embeddings
+*   **Database**: ChromaDB (Vector Store)
+
+## Installation and Setup
+
+### 1. Backend Configuration
+
+Navigate to the backend directory and set up the Python environment.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd backend
+python -m venv venv
+# Activate the virtual environment
+# Windows: venv\Scripts\activate
+# Linux/Mac: source venv/bin/activate
+
+pip install -r requirements.txt
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Create a `.env` file in the `backend` directory with the following credentials:
+```env
+GROQ_API_KEY=your_groq_api_key
+OPENAI_API_KEY=your_openai_api_key
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Start the FastAPI server:
+```bash
+uvicorn main:app --reload
+```
+The server will initialize on `http://localhost:8000`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 2. Frontend Configuration
 
-## Learn More
+Navigate to the frontend directory and install dependencies.
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+The application will be accessible at `http://localhost:3000`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Usage Guide
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1.  Ensure both the backend API and frontend dev server are running.
+2.  Input a target job URL (e.g., from a company career page or job board).
+3.  The system will scrape the content, analyze the requirements, and retrieve relevant portfolio capabilities.
+4.  A generated email based on the AIDA framework will be presented for review.
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is licensed under the MIT License.
